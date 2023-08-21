@@ -1,5 +1,5 @@
-# Estate framework
-Estate is a hierarchical state machine framework that is inspired by the [Harel Statechart](http://www.inf.ed.ac.uk/teaching/courses/seoc/2005_2006/resources/statecharts.pdf)
+# Houdini framework
+Houdini is a hierarchical state machine framework that is inspired by the [Harel Statechart](http://www.inf.ed.ac.uk/teaching/courses/seoc/2005_2006/resources/statecharts.pdf)
 formalism and UML state machine specification, but takes some notable departures from them, and does not attempt
 to fully implement all of their features, the most notable missing one being orthogonal states (having multiple active states in parallel), 
 as the gains in granularity were deemed not worth the increased implementation complexity.
