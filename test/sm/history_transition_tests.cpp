@@ -1,9 +1,9 @@
-#include "estate/actor/context.hpp"
-#include "estate/brokers/message_broker.hpp"
-#include "estate/sm/backend/event.hpp"
-#include "estate/sm/sm.hpp"
+#include "houdini/actor/context.hpp"
+#include "houdini/brokers/message_broker.hpp"
+#include "houdini/sm/backend/event.hpp"
+#include "houdini/sm/sm.hpp"
 #include "gtest/gtest.h"
-enum HEvents : estate::JEvent {
+enum HEvents : houdini::JEvent {
     e1,
     e2,
     e3,
@@ -20,16 +20,16 @@ enum HEvents : estate::JEvent {
 
 JANUS_CREATE_EVENT(HEvents, event);
 
-struct II1: estate::State<> {};
-struct II2: estate::State<> {};
+struct II1: houdini::State<> {};
+struct II2: houdini::State<> {};
 
-struct Inner1: estate::State<> {};
+struct Inner1: houdini::State<> {};
 
-struct Inner2: estate::State<>  {
+struct Inner2: houdini::State<>  {
     static constexpr auto make_transition_table(){
         //clang-format off
-        using namespace estate;
-        return estate::transition_table(
+        using namespace houdini;
+        return houdini::transition_table(
             *state<II1> + event<iie1> = state<II2>,
             state<II2> + event<iie1> = state<II1>
         );
@@ -37,13 +37,13 @@ struct Inner2: estate::State<>  {
     }
 };
 
-struct Inner3: estate::State<> {};
+struct Inner3: houdini::State<> {};
 
-struct S1: estate::State<>  {};
-struct S2: estate::State<>  {
+struct S1: houdini::State<>  {};
+struct S2: houdini::State<>  {
     static constexpr auto make_transition_table(){
-        using namespace estate;
-        return estate::transition_table(
+        using namespace houdini;
+        return houdini::transition_table(
             *state<Inner1> + event<ie1> = state<Inner2>,
              state<Inner2> + event<ie1> = state<Inner3>,
              state<Inner3> + event<ie1> = state<Inner1>,
@@ -55,10 +55,10 @@ struct S2: estate::State<>  {
     }
 };
 
-struct S3 : estate::State<> {
+struct S3 : houdini::State<> {
     static constexpr auto make_transition_table(){
-        using namespace estate;
-        return estate::transition_table(
+        using namespace houdini;
+        return houdini::transition_table(
             *state<Inner1> + event<ie1> = state<Inner2>,
              state<Inner2> + event<ie1> = state<Inner3>,
              state<Inner3> + event<ie1> = state<Inner1>,
@@ -69,10 +69,10 @@ struct S3 : estate::State<> {
     }
 };
 
-struct HRoot: estate::State<>  {
+struct HRoot: houdini::State<>  {
     static constexpr auto make_transition_table(){
-        using namespace estate;
-        return estate::transition_table(
+        using namespace houdini;
+        return houdini::transition_table(
             *state<S1> + event<e1> = state<S2>,
              state<S2> + event<e1> = state<S3>,
              state<S3> + event<e1> = state<S1>,
@@ -86,13 +86,13 @@ struct HRoot: estate::State<>  {
 
 class HistoryTransitionTests : public ::testing::Test {
     protected:
-        estate::act::BaseContext context;
-        estate::brokers::BaseBroker broker;
-        estate::SM<HRoot, HEvents> state_machine{context, broker};
+        houdini::act::BaseContext context;
+        houdini::brokers::BaseBroker broker;
+        houdini::SM<HRoot, HEvents> state_machine{context, broker};
 };
 
 TEST_F(HistoryTransitionTests, shouldReturnToHistoricalState){
-    using namespace estate;
+    using namespace houdini;
     ASSERT_TRUE(state_machine.is(state<S1>));
     state_machine.processEvent(e1); //S2, Inner1
     state_machine.processEvent(ie1); //S2, Inner2, II1
@@ -110,7 +110,7 @@ TEST_F(HistoryTransitionTests, shouldReturnToHistoricalState){
 }
 
 TEST_F(HistoryTransitionTests, shouldReturnToLowerHistoricalState){
-    using namespace estate;
+    using namespace houdini;
     ASSERT_TRUE(state_machine.is(state<S1>));
     state_machine.processEvent(e1); //S2, Inner1
     state_machine.processEvent(ie1); //S2, Inner2, II1
@@ -128,7 +128,7 @@ TEST_F(HistoryTransitionTests, shouldReturnToLowerHistoricalState){
 }
 
 TEST_F(HistoryTransitionTests, shouldReturnToNestedHistoricalState){
-    using namespace estate;
+    using namespace houdini;
     ASSERT_TRUE(state_machine.is(state<S1>));
     state_machine.processEvent(e1); //S2, Inner1
     state_machine.processEvent(ie1); //S2, Inner2, II1
@@ -144,7 +144,7 @@ TEST_F(HistoryTransitionTests, shouldReturnToNestedHistoricalState){
 }
 
 TEST_F(HistoryTransitionTests, shouldDirectTransitionToHistoricalState){
-    using namespace estate;
+    using namespace houdini;
     ASSERT_TRUE(state_machine.is(state<S1>));
     state_machine.processEvent(e1); //S2, Inner1
     state_machine.processEvent(ie1); //S2, Inner2, II1
@@ -161,7 +161,7 @@ TEST_F(HistoryTransitionTests, shouldDirectTransitionToHistoricalState){
 }
 
 TEST_F(HistoryTransitionTests, shouldDirectTransitionToNestedHistoricalState){
-    using namespace estate;
+    using namespace houdini;
     ASSERT_TRUE(state_machine.is(state<S1>));
     state_machine.processEvent(e1); //S2, Inner1
     state_machine.processEvent(ie1); //S2, Inner2, II1
@@ -178,7 +178,7 @@ TEST_F(HistoryTransitionTests, shouldDirectTransitionToNestedHistoricalState){
 }
 
 TEST_F(HistoryTransitionTests, shouldDirectTransitionToSpecifiedNestedHistoricalState){
-    using namespace estate;
+    using namespace houdini;
     ASSERT_TRUE(state_machine.is(state<S1>));
     state_machine.processEvent(e1); //S2, Inner1
     state_machine.processEvent(ie1); //S2, Inner2, II1

@@ -1,6 +1,6 @@
-#include "estate/estate.hpp"
-#include "estate/actor/actor_inc.hpp"
-#include "estate/brokers/message_broker.hpp"
+#include "houdini/houdini.hpp"
+#include "houdini/actor/actor_inc.hpp"
+#include "houdini/brokers/message_broker.hpp"
 
 #include "action_context.hpp"
 #include "gtest/gtest.h"
@@ -9,7 +9,7 @@
 
 
 
-struct II1 : public estate::State<TestContext, Broker> {
+struct II1 : public houdini::State<TestContext, Broker> {
 	void onEntry(TestContext& context, Broker&) override {
 		context.l3++;
 	}
@@ -20,11 +20,11 @@ struct II1 : public estate::State<TestContext, Broker> {
 	
 };
 
-struct II2 : public estate::State<TestContext, Broker> {
+struct II2 : public houdini::State<TestContext, Broker> {
 
 };
 
-struct Inner1 : public estate::State<TestContext, Broker> {
+struct Inner1 : public houdini::State<TestContext, Broker> {
 	void onEntry(TestContext& context, Broker&) override {
 		context.l2++;
 	}
@@ -35,11 +35,11 @@ struct Inner1 : public estate::State<TestContext, Broker> {
 
 };
 
-struct Inner2 : estate::State<TestContext, Broker> {
+struct Inner2 : houdini::State<TestContext, Broker> {
 
 	static constexpr auto make_transition_table(){
 		//clang-format off
-		using namespace estate;
+		using namespace houdini;
 		return transition_table(
 			*state<II1> + event<iie1> = state<II2>,
 			 state<II2> + event<iie1> = state<II1>
@@ -48,10 +48,10 @@ struct Inner2 : estate::State<TestContext, Broker> {
 	}
 };
 
-struct S1 : estate::State<TestContext, Broker> {
+struct S1 : houdini::State<TestContext, Broker> {
 };
 
-struct S2 : estate::State<TestContext, Broker> {
+struct S2 : houdini::State<TestContext, Broker> {
 	void onEntry(TestContext& context, Broker&) override {
 		std::cout << "Entering S2" << std::endl;
 		std::cout << "Context val: " << context.l1 << std::endl;
@@ -65,7 +65,7 @@ struct S2 : estate::State<TestContext, Broker> {
 
 };
 
-struct S3 : estate::State<TestContext, Broker> {
+struct S3 : houdini::State<TestContext, Broker> {
 	
 	void onEntry(TestContext& context, Broker&) override {
 		context.l1++;
@@ -77,7 +77,7 @@ struct S3 : estate::State<TestContext, Broker> {
 
 	static constexpr auto make_transition_table(){
 		//clang-format on
-		using namespace estate;
+		using namespace houdini;
 		return transition_table(
 			*state<Inner1> + event<ie1> = state<Inner2>,
 			 state<Inner2> + event<ie1> = state<Inner1>
@@ -86,10 +86,10 @@ struct S3 : estate::State<TestContext, Broker> {
 	}
 };
 
-struct ARoot : estate::State<TestContext, Broker> {
+struct ARoot : houdini::State<TestContext, Broker> {
 	static constexpr auto make_transition_table(){
 		//clang-format on
-		using namespace estate;
+		using namespace houdini;
 		return transition_table(
 			*state<S1> + event<e1> = state<S2>,
 			 state<S2> + event<e1> = state<S3>,
@@ -108,7 +108,7 @@ class TransitionActionTests : public ::testing::Test {
 		TestContext context;
 		Broker broker;
 
-		estate::SM<ARoot, Events, TestContext, Broker> state_machine;
+		houdini::SM<ARoot, Events, TestContext, Broker> state_machine;
 };
 
  
@@ -116,7 +116,7 @@ TEST_F(TransitionActionTests, basicTransitionShouldCallEntryAction){
 	ASSERT_EQ(context.l1, 0);
 	state_machine.processEvent(e1);
 	EXPECT_EQ(state_machine.currentStateName(), "S2");
-	EXPECT_TRUE(state_machine.is(estate::state<S2>));
+	EXPECT_TRUE(state_machine.is(houdini::state<S2>));
 	EXPECT_EQ(context.l1, 1) << "S2 on entry should get called exactly once";
 }
 

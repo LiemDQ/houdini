@@ -1,5 +1,5 @@
 # Architecture
-This document discusses the rationale behind of the architectural decisions behind Estate. 
+This document discusses the rationale behind of the architectural decisions behind Houdini. 
 
 ## Why template metaprogramming?
 

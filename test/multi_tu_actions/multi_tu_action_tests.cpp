@@ -1,12 +1,12 @@
-#include "estate/estate.hpp"
+#include "houdini/houdini.hpp"
 #include "state_1.hpp"
 #include "state_2.hpp"
 #include "action_context.hpp"
 #include <gtest/gtest.h>
 
-struct RootSM : estate::State<TestContext, Broker> {
+struct RootSM : houdini::State<TestContext, Broker> {
     static constexpr auto make_transition_table() {
-        using namespace estate;
+        using namespace houdini;
         return transition_table(
             *state<State1> + event<e1> = state<State2>,
              state<State2> + event<e2> = state<State1>
@@ -18,7 +18,7 @@ class MultiTUActionTests : public ::testing::Test {
     protected:
         TestContext context;
         Broker broker;
-        estate::SM<RootSM, Events, TestContext, Broker> state_machine{context, broker};
+        houdini::SM<RootSM, Events, TestContext, Broker> state_machine{context, broker};
 
 };
 

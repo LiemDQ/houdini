@@ -1,11 +1,11 @@
-#include "estate/actor/actor.hpp"
+#include "houdini/actor/actor.hpp"
 #include "test_actor_sm.hpp"
 #include "gtest/gtest.h"
 
-using namespace estate;
+using namespace houdini;
 class BasicActorTests : public ::testing::Test {
     protected:
-        estate::act::Actor<Events, Root, act::BaseContext, brokers::BaseBroker> actor;
+        houdini::act::Actor<Events, Root, act::BaseContext, brokers::BaseBroker> actor;
 };
 
 TEST_F(BasicActorTests, shouldInitialize){

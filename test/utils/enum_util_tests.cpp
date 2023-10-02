@@ -1,5 +1,5 @@
-#include "estate/util/enum_utils.hpp"
-#include "estate/util/types.hpp"
+#include "houdini/util/enum_utils.hpp"
+#include "houdini/util/types.hpp"
 
 #include <gtest/gtest.h>
 #include <algorithm>
@@ -9,7 +9,7 @@
 class EnumUtilTests : public ::testing::Test {
 	protected:
 	
-	enum TestEnum : estate::JEvent {
+	enum TestEnum : houdini::JEvent {
 		v0,
 		v1,
 		v2,
@@ -25,7 +25,7 @@ class EnumUtilTests : public ::testing::Test {
 		t4 = 255
 	};
 
-	enum class ScopedEnum : estate::JEvent {
+	enum class ScopedEnum : houdini::JEvent {
 		s0,
 		s1 = 30,
 		s2 = 2,
@@ -33,7 +33,7 @@ class EnumUtilTests : public ::testing::Test {
 		s4
 	};
 
-	enum class ScopedEnum2 : estate::JEvent {
+	enum class ScopedEnum2 : houdini::JEvent {
 		s0,
 		s1,
 		s2,
@@ -43,7 +43,7 @@ class EnumUtilTests : public ::testing::Test {
 
 };
 
-using namespace estate;
+using namespace houdini;
 TEST_F(EnumUtilTests, enumMaxValueIsCorrect){	
 	EXPECT_EQ(util::enum_max_value<TestEnum>(), 4);
 	EXPECT_EQ(util::enum_max_value<ScopedEnum>(), 30);

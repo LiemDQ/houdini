@@ -1,4 +1,4 @@
-#include <estate/sm/sm.hpp>
+#include <houdini/sm/sm.hpp>
 
 #include <gtest/gtest.h>
 
@@ -25,40 +25,40 @@ const auto a1 = [](auto){};
 
 struct SubSubState {
     static constexpr auto make_transition_table() {
-        return estate::transition_table( 
-            * estate::state<S1> + estate::event<e1> [g1] / a1 = estate::state<S1>
+        return houdini::transition_table( 
+            * houdini::state<S1> + houdini::event<e1> [g1] / a1 = houdini::state<S1>
         );
     }
 };
 
 struct SubState {
     static constexpr auto make_transition_table() {
-        return estate::transition_table(
-            * estate::state<S1> + estate::event<e1> [g1] / a1 = estate::state<SubSubState>,
-              estate::state<S1> + estate::event<e2> [g1] / a1 = estate::state<SubSubState>,
-              estate::state<S1> + estate::event<e3> [g1] / a1 = estate::state<SubSubState>,
-              estate::state<S1> + estate::event<e4> [g1] / a1 = estate::state<SubSubState>,
-              estate::state<S1> + estate::event<e5> [g1] / a1 = estate::state<SubSubState>,
-              estate::state<S1> + estate::event<e6> [g1] / a1 = estate::state<SubSubState>,
-              estate::state<S1> + estate::event<e7> [g1] / a1 = estate::state<SubSubState>,
-              estate::state<S1> + estate::event<e8> [g1] / a1 = estate::state<SubSubState>,
-              estate::state<S1> + estate::event<e9> [g1] / a1 = estate::state<SubSubState>
+        return houdini::transition_table(
+            * houdini::state<S1> + houdini::event<e1> [g1] / a1 = houdini::state<SubSubState>,
+              houdini::state<S1> + houdini::event<e2> [g1] / a1 = houdini::state<SubSubState>,
+              houdini::state<S1> + houdini::event<e3> [g1] / a1 = houdini::state<SubSubState>,
+              houdini::state<S1> + houdini::event<e4> [g1] / a1 = houdini::state<SubSubState>,
+              houdini::state<S1> + houdini::event<e5> [g1] / a1 = houdini::state<SubSubState>,
+              houdini::state<S1> + houdini::event<e6> [g1] / a1 = houdini::state<SubSubState>,
+              houdini::state<S1> + houdini::event<e7> [g1] / a1 = houdini::state<SubSubState>,
+              houdini::state<S1> + houdini::event<e8> [g1] / a1 = houdini::state<SubSubState>,
+              houdini::state<S1> + houdini::event<e9> [g1] / a1 = houdini::state<SubSubState>
         );
     }
 };
 
 struct MainState {
     static constexpr auto make_transition_table() {
-        return estate::transition_table(
-            estate::state<S1> + estate::event<e1> [g1]/a1 = estate::state<SubState>,
-            estate::state<S1> + estate::event<e2> [g1]/a1 = estate::state<SubState>,
-            estate::state<S1> + estate::event<e3> [g1]/a1 = estate::state<SubState>,
-            estate::state<S1> + estate::event<e4> [g1]/a1 = estate::state<SubState>,
-            estate::state<S1> + estate::event<e5> [g1]/a1 = estate::state<SubState>,
-            estate::state<S1> + estate::event<e6> [g1]/a1 = estate::state<SubState>,
-            estate::state<S1> + estate::event<e7> [g1]/a1 = estate::state<SubState>,
-            estate::state<S1> + estate::event<e8> [g1]/a1 = estate::state<SubState>,
-            estate::state<S1> + estate::event<e9> [g1]/a1 = estate::state<SubState>
+        return houdini::transition_table(
+            houdini::state<S1> + houdini::event<e1> [g1]/a1 = houdini::state<SubState>,
+            houdini::state<S1> + houdini::event<e2> [g1]/a1 = houdini::state<SubState>,
+            houdini::state<S1> + houdini::event<e3> [g1]/a1 = houdini::state<SubState>,
+            houdini::state<S1> + houdini::event<e4> [g1]/a1 = houdini::state<SubState>,
+            houdini::state<S1> + houdini::event<e5> [g1]/a1 = houdini::state<SubState>,
+            houdini::state<S1> + houdini::event<e6> [g1]/a1 = houdini::state<SubState>,
+            houdini::state<S1> + houdini::event<e7> [g1]/a1 = houdini::state<SubState>,
+            houdini::state<S1> + houdini::event<e8> [g1]/a1 = houdini::state<SubState>,
+            houdini::state<S1> + houdini::event<e9> [g1]/a1 = houdini::state<SubState>
         );
     }
 };

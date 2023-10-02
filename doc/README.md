@@ -1,5 +1,5 @@
-# Janus State Machine
-JSM is a hierarchical state machine that is inspired by the [Harel Statechart](http://www.inf.ed.ac.uk/teaching/courses/seoc/2005_2006/resources/statecharts.pdf)
+# Houdini State Machine
+HSM is a hierarchical state machine that is inspired by the [Harel Statechart](http://www.inf.ed.ac.uk/teaching/courses/seoc/2005_2006/resources/statecharts.pdf)
 formalism and UML state machine specification, but takes some notable departures from them, and does not attempt
 to fully implement all of their features, the most notable missing one being orthogonal states (having multiple active states in parallel), 
 as the gains in granularity were deemed not worth the increased implementation complexity.
@@ -14,24 +14,6 @@ A non-exhaustive list of design requirements is:
 * Fast, deterministic performance.
 * Type safety, with state mismatches and incorrectly specified transitions flagged at compile time
 * Not requiring the use of a code generator, which makes verification efforts significantly more difficult and adds more "friction" to the development cycle.
-
-## Why template metaprogramming?
-
-State machines are particularly well-suited to metaprogramming. Almost by definition, they are easy to model and have well-understood inputs and outputs. 
-A highly scalable, production-quality state machine framework needs a couple of things:
-* A way to "link" all the states with their transitions
-* A way to "register" the states with the state machine
-* A means of [multiple dispatch](https://en.wikipedia.org/wiki/Multiple_dispatch) to respond to events
-* A means of generating events to be processed
-
-With the exception of the last point, these can all be done at compile-time, which confers substantial benefits:
-* **Type safety**: possible to determine if your state machine is ill-formed at compile time, reducing likelihood of error.
-* **Better performance**: the state-event reactions are resolved at compile time, so at runtime the state machine only has to transition to 
-the new state; it does not have to spend time "figuring out" what the correct transition is.
-* **Scalability**: For larger state machines, connecting all the states and components together manually is tedious and error-prone. 
-Having a framework that can do the work automatically allows for much larger and comprehensive state machines.
-In this case, the advantages of template metaprogramming (type safety and scalability in particular) outweigh the downsides 
-(increased complexity, lower maintainability, increased compile times). The complexity is hidden behind the backend, allowing for the application code to be much simpler.
 
 # Current status
 The current architecture is heavily based on using template metaprogramming to perform a lot of computation at compile time and reduce the dispatch computation to accessing a few array indices and a single virtual pointer function call at runtime. This is very efficient but leads to some architectural limitations, as everything about the transition needs to be known at compile time. This means that in particular we cannot call entry and exit actions when using history states, as the knowledge of which state to transition to (and consequently which callbacks to call) is only available at runtime. 

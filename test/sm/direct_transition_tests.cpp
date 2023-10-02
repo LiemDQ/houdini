@@ -1,13 +1,13 @@
-#include "estate/brokers/message_broker.hpp"
-#include "estate/sm/backend/event.hpp"
-#include "estate/sm/backend/flatten.hpp"
-#include "estate/sm/backend/resolve_state.hpp"
-#include "estate/sm/backend/traits.hpp"
-#include "estate/sm/sm.hpp"
-#include "estate/util/types.hpp"
+#include "houdini/brokers/message_broker.hpp"
+#include "houdini/sm/backend/event.hpp"
+#include "houdini/sm/backend/flatten.hpp"
+#include "houdini/sm/backend/resolve_state.hpp"
+#include "houdini/sm/backend/traits.hpp"
+#include "houdini/sm/sm.hpp"
+#include "houdini/util/types.hpp"
 #include <gtest/gtest.h>
 
-enum Events : estate::JEvent {
+enum Events : houdini::JEvent {
     e1,
     e2,
     e3,
@@ -24,17 +24,17 @@ enum Events : estate::JEvent {
 
 JANUS_CREATE_EVENT(Events, event);
 
-struct Inner1 : estate::State<> {};
+struct Inner1 : houdini::State<> {};
 
-struct II1 : estate::State<>{};
-struct II2 : estate::State<>{};
+struct II1 : houdini::State<>{};
+struct II2 : houdini::State<>{};
 
 
-struct Inner2 : estate::State<> {
+struct Inner2 : houdini::State<> {
     static constexpr auto make_transition_table(){
         //clang-format off
-        using namespace estate;
-        return estate::transition_table(
+        using namespace houdini;
+        return houdini::transition_table(
             *state<II1> + event<iie1> = state<II2>,
             state<II2> +  event<iie2> = state<II1>
         );
@@ -42,11 +42,11 @@ struct Inner2 : estate::State<> {
     }
 };
 
-struct Inner3 : estate::State<> {
+struct Inner3 : houdini::State<> {
     static constexpr auto make_transition_table(){
         //clang-format off
-        using namespace estate;
-        return estate::transition_table(
+        using namespace houdini;
+        return houdini::transition_table(
             *state<II1> + event<iie1> = state<II2>,
             state<II2> +  event<iie2> = state<II1>
         );
@@ -54,11 +54,11 @@ struct Inner3 : estate::State<> {
     }
 };
 
-struct Inner5 : estate::State<> {
+struct Inner5 : houdini::State<> {
     static constexpr auto make_transition_table(){
         //clang-format off
-        using namespace estate;
-        return estate::transition_table(
+        using namespace houdini;
+        return houdini::transition_table(
             *state<II1> + event<iie1> = state<II2>,
             state<II2> +  event<iie2> = state<II1>
         );
@@ -66,15 +66,15 @@ struct Inner5 : estate::State<> {
     }
 };
 
-struct Inner4 : estate::State<> {};
+struct Inner4 : houdini::State<> {};
 
-struct S1 : estate::State<> {};
+struct S1 : houdini::State<> {};
 
-struct S2 : estate::State<> {
+struct S2 : houdini::State<> {
     static constexpr auto make_transition_table(){
         //clang-format off
-        using namespace estate;
-        return estate::transition_table(
+        using namespace houdini;
+        return houdini::transition_table(
             *state<Inner1> + event<ie1> = state<Inner2>,
             state<Inner2> +  event<ie1> = state<Inner3>,
             state<Inner3> + event<ie1> = state<Inner4>,
@@ -90,11 +90,11 @@ struct S2 : estate::State<> {
 };
 
 
-struct S3 : estate::State<> {
+struct S3 : houdini::State<> {
     static constexpr auto make_transition_table(){
         //clang-format off
-        using namespace estate;
-        return estate::transition_table(
+        using namespace houdini;
+        return houdini::transition_table(
             *state<Inner1> + event<ie1> = state<Inner2>,
             state<Inner2> +  event<ie1> = state<Inner3>,
             state<Inner3> + event<ie1> = state<Inner4>,
@@ -109,11 +109,11 @@ struct S3 : estate::State<> {
     }
 };
 
-struct DRoot : estate::State<> {
+struct DRoot : houdini::State<> {
     static constexpr auto make_transition_table(){
         //clang-format off
-        using namespace estate;
-        return estate::transition_table(
+        using namespace houdini;
+        return houdini::transition_table(
             *state<S1> + event<e1> = state<S2>,
             state<S2> + event<e1> = state<S3>,
             state<S3> + event<e1> = state<S1>,
@@ -136,17 +136,17 @@ struct DRoot : estate::State<> {
 
 class DirectTransitionTests : public ::testing::Test {
     protected:
-        estate::act::BaseContext context;
-        estate::brokers::BaseBroker broker;
-        estate::SM<DRoot, Events> state_machine{context, broker};
+        houdini::act::BaseContext context;
+        houdini::brokers::BaseBroker broker;
+        houdini::SM<DRoot, Events> state_machine{context, broker};
 };
 
 TEST_F(DirectTransitionTests, basicDirectTransitionCorrect){
-    using namespace estate;
+    using namespace houdini;
     sm::flattenTransitionTable(state_machine.root_state);
     //auto lst = sm::getParentStateList(direct<II2, Inner4, S3>);
-    //auto transition = estate::sm::detail::ExtendedTransition<boost::mp11::mp_list<estate::sm::TState<DRoot> >, estate::sm::TState<estate::sm::Direct<estate::sm::TState<II2>, estate::sm::TState<Inner2> > >, 10, estate::sm::NoGuard, estate::sm::NoAction, estate::sm::TState<S1>, false>{};
-    //auto dst = estate::sm::resolveSrcParents(transition);
+    //auto transition = houdini::sm::detail::ExtendedTransition<boost::mp11::mp_list<houdini::sm::TState<DRoot> >, houdini::sm::TState<houdini::sm::Direct<houdini::sm::TState<II2>, houdini::sm::TState<Inner2> > >, 10, houdini::sm::NoGuard, houdini::sm::NoAction, houdini::sm::TState<S1>, false>{};
+    //auto dst = houdini::sm::resolveSrcParents(transition);
     ASSERT_TRUE(state_machine.is(state<S1>));
     state_machine.processEvent(e1);
     ASSERT_TRUE(state_machine.is(state<Inner1>, state<S2>));
@@ -157,7 +157,7 @@ TEST_F(DirectTransitionTests, basicDirectTransitionCorrect){
 }
 
 TEST_F(DirectTransitionTests, transitionBetweenLowerLevelStatesCorrect){
-    using namespace estate;
+    using namespace houdini;
     ASSERT_TRUE(state_machine.is(state<S1>));
     state_machine.processEvent(e1);
     ASSERT_TRUE(state_machine.is(state<Inner1>, state<S2>));
@@ -167,7 +167,7 @@ TEST_F(DirectTransitionTests, transitionBetweenLowerLevelStatesCorrect){
 }
 
 TEST_F(DirectTransitionTests, transitionFromLowerStateToHigherCorrect){
-    using namespace estate;
+    using namespace houdini;
     ASSERT_TRUE(state_machine.is(state<S1>));
     state_machine.processEvent(e2);
     ASSERT_TRUE(state_machine.is(state<Inner1>, state<S3>));
@@ -181,7 +181,7 @@ TEST_F(DirectTransitionTests, transitionFromLowerStateToHigherCorrect){
 }
 
 TEST_F(DirectTransitionTests, shouldtransition2LevelsUp){
-    using namespace estate;
+    using namespace houdini;
     ASSERT_TRUE(state_machine.is(state<S1>));
     state_machine.processEvent(e1);
     ASSERT_TRUE(state_machine.is(state<Inner1>, state<S2>));
@@ -196,7 +196,7 @@ TEST_F(DirectTransitionTests, shouldtransition2LevelsUp){
 }
 
 TEST_F(DirectTransitionTests, shouldReachCorrectInitialStateFromTransition2LevelsUp){
-    using namespace estate;
+    using namespace houdini;
     ASSERT_TRUE(state_machine.is(state<S1>));
     state_machine.processEvent(e1);
     ASSERT_TRUE(state_machine.is(state<Inner1>, state<S2>));
@@ -213,7 +213,7 @@ TEST_F(DirectTransitionTests, shouldReachCorrectInitialStateFromTransition2Level
 }
 
 TEST_F(DirectTransitionTests, shouldTransition2LevelsAcross){
-    using namespace estate;
+    using namespace houdini;
     ASSERT_TRUE(state_machine.is(state<S1>));
     state_machine.processEvent(e1);
     ASSERT_TRUE(state_machine.is(state<Inner1>, state<S2>));
@@ -232,7 +232,7 @@ TEST_F(DirectTransitionTests, shouldTransition2LevelsAcross){
 }
 
 TEST_F(DirectTransitionTests, shouldTransitionFromUpperLevelState2LevelsUp){
-    using namespace estate;
+    using namespace houdini;
     ASSERT_TRUE(state_machine.is(state<S1>));
     state_machine.processEvent(e1);
     ASSERT_TRUE(state_machine.is(state<Inner1>, state<S2>));

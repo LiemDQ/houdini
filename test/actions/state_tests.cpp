@@ -1,19 +1,19 @@
-#include "estate/actor/context.hpp"
-#include "estate/brokers/message_broker.hpp"
-#include "estate/estate.hpp"
+#include "houdini/actor/context.hpp"
+#include "houdini/brokers/message_broker.hpp"
+#include "houdini/houdini.hpp"
 
 #include "gtest/gtest.h"
 
-struct Context : estate::act::BaseContext {
+struct Context : houdini::act::BaseContext {
 	int i = 0;
 	int k = 0;
 };
 
-struct Broker : estate::brokers::BaseBroker {
+struct Broker : houdini::brokers::BaseBroker {
 
 };
 
-using State = estate::State<Context, Broker>;
+using State = houdini::State<Context, Broker>;
 
 struct TestState : State {
 	TestState() {

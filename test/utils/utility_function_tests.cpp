@@ -1,4 +1,4 @@
-#include "estate/util/utility_functions.hpp"
+#include "houdini/util/utility_functions.hpp"
 #include <gtest/gtest.h>
 
 #include <array>
@@ -7,7 +7,7 @@
 #include <string_view>
 
 TEST(TestUtilityFunctions, shouldFillArrayLikeStd){
-    using namespace estate;
+    using namespace houdini;
     constexpr std::size_t arr_length = 20;
     constexpr int fill_value = 5;
 
@@ -22,7 +22,7 @@ TEST(TestUtilityFunctions, shouldFillArrayLikeStd){
 }
 
 TEST(TestUtilityFunctions, shouldProduceSameResultAsStdTransform){
-    using namespace estate;
+    using namespace houdini;
     auto squared = [](int x){return x*x; };
 
     constexpr std::size_t arr_length = 20;
